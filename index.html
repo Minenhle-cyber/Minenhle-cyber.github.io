@@ -936,13 +936,13 @@
         <label>Message</label>
         <textarea placeholder="What's on your mind?"></textarea>
       </div>
-      <button class="form-submit">Send Message →</button>
+      <button class="form-submit" onclick="submitForm(event)">Send Message →</button>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>Built by Your Name · <a href="https://github.com/Minenhle-cyber" style="color:var(--accent);text-decoration:none;">GitHub</a></p>
+  <p>Built by Minenhle Mchunu · <a href="https://github.com/Minenhle-cyber" style="color:var(--accent);text-decoration:none;">GitHub</a></p>
 </footer>
 
 <script>
@@ -973,6 +973,43 @@
     // Trigger hero immediately
     if (el.closest('#hero')) el.classList.add('visible');
   });
+
+  async function submitForm(e) {
+  e.preventDefault();
+  const btn = e.target;
+  const name = document.querySelector('input[type="text"]').value;
+  const email = document.querySelector('input[type="email"]').value;
+  const message = document.querySelector('textarea').value;
+
+  if (!name || !email || !message) {
+    btn.textContent = 'Please fill all fields';
+    setTimeout(() => btn.textContent = 'Send Message →', 2000);
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('http://localhost:3000/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, message })
+    });
+
+    if (res.ok) {
+      btn.textContent = '✓ Message sent!';
+      btn.style.background = '#16a34a';
+    } else {
+      btn.textContent = 'Something went wrong';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Could not reach server';
+    btn.disabled = false;
+  }
+}
 </script>
+
 </body>
 </html>
